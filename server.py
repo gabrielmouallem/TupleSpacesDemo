@@ -64,6 +64,6 @@ class Server:
         self._server.serve_forever()
 
 if __name__ == '__main__':
-    server = Server(('', 20064))
+    server = Server(('', 8000))
     print("Server started.")
     server.init_server()

@@ -1,6 +1,6 @@
 from xmlrpc.client import ServerProxy
 
-server = ServerProxy("http://localhost:20064", allow_none=True)
+server = ServerProxy("http://localhost:8000", allow_none=True)
 
 response = server.tuple_space_out(("teste", 1))
 print(response)
