@@ -7,18 +7,18 @@ class TupleSpace:
         self.blocked = threading.Condition()
         self.length = 0
         self.tuples = []
-    
+
     #insere a tupla no espaço de tuplas
     def write(self, t):
 
         #será inserida no final de uma lista (representando o espaço de tuplas)
         #sem afetar as tuplas que já foram inseridas
         if self.verifyTuple(t):
-            self.tuples.append(tuple)
+            self.tuples.append(t)
             self.length += 1
             
             #notifica todos os computadores de que uma nova tupla foi inserida
-            self.new_tuple.notifyAll()
+            #self.new_tuple.notifyAll()
         else:
             raise ValueError("Por favor, insira uma tupla!")
 
@@ -64,7 +64,7 @@ class TupleSpace:
     #irá procurar por uma tupla e retorná-la
     def getTuple(self, t):
 
-        self.blocked.wait()
+        #self.blocked.wait()
         found = True
 
         #espaço de tuplas está vazio
@@ -76,7 +76,7 @@ class TupleSpace:
         if len(t) == 0:
             self.getAllTuples()
 
-        else:        
+        else:
             #procura a tupla no espaço
             for tup in self.tuples:
     
@@ -98,7 +98,7 @@ class TupleSpace:
             return -1
         
         #notifica todos os outros computadores que o espaço não tá mais bloqueado
-        self.blocked.notifyAll()
+        #self.blocked.notifyAll()
 
     #retorna todas as tuplas que foram inseridas no espaço
     def getAllTuples(self):
