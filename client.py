@@ -1,10 +1,9 @@
 from xmlrpc.client import ServerProxy
 
-server = ServerProxy("http://ff9c2de17b3a.ngrok.io:8000", allow_none=True)
+server = ServerProxy("https://0dd2c1843cf6.ngrok.io", allow_none=True)
 
-temp_tuple = ("teste", 1, 2)
-
-print(server.write(temp_tuple))
+print(server.hello_world())
+print(server.write(("teste", 1, 2, 3)))
 
 # response = server.tuple_space_rd()
 # print(response)

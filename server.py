@@ -4,6 +4,7 @@ from tuplespace import TupleSpace
 
 class Server:
     _server_methods = [
+        'hello_world',
         'write',
         'read',
         'take',
@@ -16,6 +17,9 @@ class Server:
 
         for method in self._server_methods:
             self._server.register_function(getattr(self, method))
+
+    def hello_world(self):
+        return "hello world"
 
     def write(self, t):
         return self.tuple_space.write(t)
@@ -33,6 +37,6 @@ class Server:
         self._server.serve_forever()
 
 if __name__ == '__main__':
-    server = Server(('127.0.0.1', 8000))
+    server = Server(('', 8000))
     print("Server started.")
     server.init_server()
