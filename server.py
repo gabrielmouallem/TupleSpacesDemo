@@ -8,7 +8,7 @@ class Server:
         'write',
         'read',
         'take',
-        'getAllTuples',
+        'get_all_tuples',
     ]
 
     def __init__(self, address):
@@ -22,15 +22,18 @@ class Server:
         return "hello world"
 
     def write(self, t):
+        t = tuple(t)
         return self.tuple_space.write(t)
 
     def read(self, t):
+        t = tuple(t)
         return self.tuple_space.read(t)
 
     def take(self, t):
+        t = tuple(t)
         return self.tuple_space.take(t)
 
-    def getAllTuples(self):
+    def get_all_tuples(self):
         self.tuple_space.getAllTuples()
 
     def init_server(self):
