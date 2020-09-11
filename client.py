@@ -1,10 +1,24 @@
 from xmlrpc.client import ServerProxy
 
-server = ServerProxy("http://ff9c2de17b3a.ngrok.io:8000", allow_none=True)
+if __name__ == "__main__":
+    
+    server = ServerProxy("https://c9c13e8e4232.ngrok.io/", allow_none=True)
 
-temp_tuple = ("teste", 1, 2)
+    chave = 'calculos'
+    chave_resposta = 'resultados'
 
-print(server.write(temp_tuple))
+    primeiro_num = float(input(print("Digite o primeiro número: ")))
+    segundo_num = float(input(print("Digite o segundo número: ")))
 
-# response = server.tuple_space_rd()
-# print(response)
+    tupla = tuple(chave, primeiro_num, segundo_num)
+    server.tuple_space.write(tupla)
+
+    resultados = server.tuple_space.take(tuple(chave_resposta))
+
+    if resultados == -1:
+        print("Tupla não encontrada!")
+    else:
+        print(primeiro_num + " + " + segundo_num + " = " + resultados(1))
+        print(primeiro_num + " - " + segundo_num + " = " + resultados(2))
+        print(primeiro_num + " * " + segundo_num + " = " + resultados(3))
+        print(primeiro_num + " / " + segundo_num + " = " + resultados(4))
