@@ -107,19 +107,11 @@ class TupleSpace:
             self.tuples.remove(t)
             self.length -= 1
 
-            return {
-                "data": t,
-                "response": "Tupla" + str(t) + "removida com sucesso!",
-                "status": "OK"
-            }
+            return t
 
 
         except Exception as ex:
-            return {
-                "data": -1,
-                "response": "Não foi possível remover a tupla. " + str(ex),
-                "status": "ERROR"
-            }
+            return -1
 
     # irá procurar por uma tupla e retorná-la
     # @syncronized
@@ -130,16 +122,12 @@ class TupleSpace:
 
         # espaço de tuplas está vazio
         if self.length == 0:
-            return {
-                "data": -1,
-                "response": "Não foi possível remover a tupla.",
-                "status": "ERROR"
-            }
+            return -1
 
         # não foi passado nenhum parâmetro
         # retorna todas as tuplas
         if len(t) == 0:
-            self.getAllTuples()
+            return self.getAllTuples()
 
         else:
             # procura a tupla no espaço
@@ -158,17 +146,9 @@ class TupleSpace:
 
                 # se encontrou uma tupla, retorna ela
                 if found:
-                    return {
-                        "data": current_tuple,
-                        "response": "Tupla encontrada" + str(current_tuple) + ".",
-                        "status": "OK"
-                    }
+                    return current_tuple
 
-            return {
-                "data": -1,
-                "response": "Tupla não foi encontrada.",
-                "status": "ERROR"
-            }
+            return -1
 
         # notifica todos os outros computadores que o espaço não tá mais bloqueado
         # self.blocked.notifyAll()
@@ -176,18 +156,10 @@ class TupleSpace:
     # retorna todas as tuplas que foram inseridas no espaço
     def getAllTuples(self):
         try:
-            return {
-                "data": self.tuples,
-                "response": "Tuplas: " + str(self.tuples),
-                "status": "OK"
-            }
+            return self.tuples
 
         except Exception as ex:
-            return {
-                "data": -1,
-                "response": "Ocorreu um problema ao pegar todas as tuplas. " + str(ex),
-                "status": "ERROR"
-            }
+            return -1
 
     # retorna a quantidade de tuplas inseridas no espaço
     def getTupleSpaceLength(self):

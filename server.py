@@ -6,7 +6,6 @@ class Server:
         'write',
         'read',
         'take',
-        'get_all_tuples',
     ]
 
     def __init__(self, address):
@@ -27,9 +26,6 @@ class Server:
     def take(self, t):
         t = tuple(t)
         return self.tuple_space.take(t)
-
-    def get_all_tuples(self):
-        self.tuple_space.getAllTuples()
 
     def init_server(self):
         self._server.serve_forever()
