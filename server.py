@@ -17,7 +17,7 @@ class Server:
         for method in self._server_methods:
             self._server.register_function(getattr(self, method))
 
-    def write(self):
+    def write(self, t):
         t = tuple(t)
         return self.tuple_space.write(t)
 
