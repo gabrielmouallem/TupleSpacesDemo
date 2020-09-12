@@ -7,11 +7,16 @@ if __name__ == "__main__":
     chave = 'calculos'
     # chave_resposta = 'resultados'
 
-    primeiro_num = 11 # float(input(print("Digite o primeiro número: ")))
-    segundo_num = 11 # float(input(print("Digite o segundo número: ")))
+    primeiro_num = 12 # float(input(print("Digite o primeiro número: ")))
+    segundo_num = 12 # float(input(print("Digite o segundo número: ")))
 
+    temp_tupla = (chave, float(), float())
     tupla = (chave, primeiro_num, segundo_num)
-    server.write(tupla)
+
+    if server.take(tupla)['data']:
+        server.write(tupla)
+    else:
+        server.write(tupla)
 
     # resultados = server.take((chave_resposta))
     #

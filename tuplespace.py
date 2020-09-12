@@ -129,6 +129,7 @@ class TupleSpace:
         if len(t) == 0:
             return self.getAllTuples()
 
+
         else:
             # procura a tupla no espaço
             for tup in self.tuples:

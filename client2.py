@@ -1,20 +1,20 @@
 from xmlrpc.client import ServerProxy
 
 def soma(num1, num2):
-    return num1 + num2
+    return float(num1 + num2)
 
 def subtrai(num1, num2):
-    return num1 - num2
+    return float(num1 - num2)
 
 def multiplica(num1, num2):
-    return num1 * num2
+    return float(num1 * num2)
 
 def divisao(num1, num2):
     try:
         divisao = num1/num2
-        return divisao
+        return float(divisao)
     except ZeroDivisionError:
-        return 0
+        return float(0)
 
 if __name__ == "__main__":
     
@@ -38,9 +38,17 @@ if __name__ == "__main__":
             mult_numeros = multiplica(primeiro_numero, segundo_numero)
             div_numeros = divisao(primeiro_numero, segundo_numero)
 
+            temp_tupla_resposta = (chave_resultado_ops, float(), float(), float(), float())
             tupla_resposta = (chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
-            resposta = server.read(tupla_resposta)['data']
 
-            if tupla_resposta != resposta or resposta == -1:
+            take_tupla_resposta = server.take(temp_tupla_resposta)
+
+            if take_tupla_resposta['data']:
+                server.write(tupla_resposta)
+            else:
+                server.write(tupla_resposta)
+
+            print(tupla_resposta, take_tupla_resposta['data'])
+            if tupla_resposta != take_tupla_resposta['data'] or take_tupla_resposta['data'] == -1:
                 server.write(tupla_resposta)
                 print("Tupla resposta escrita!")
