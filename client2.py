@@ -25,7 +25,9 @@ if __name__ == "__main__":
         chave_cliente = 'calculos'
         chave_resultado_ops = 'resultados'
 
-        numeros_cliente = server.take((chave_cliente, 10, 10))
+        numeros_cliente = server.take((chave_cliente, 10, 10))['data']
+
+        print(numeros_cliente)
 
         if numeros_cliente == -1:
             print("Tupla não encontrada!")
