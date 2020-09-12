@@ -3,7 +3,6 @@ from tuplespace import TupleSpace
 
 class Server:
     _server_methods = [
-        'hello_world',
         'write',
         'read',
         'take',
