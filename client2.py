@@ -18,24 +18,27 @@ def divisao(num1, num2):
 
 if __name__ == "__main__":
     
-    server = ServerProxy("https://c9c13e8e4232.ngrok.io/", allow_none=True)
+    server = ServerProxy("http://localhost:8000", allow_none=True)
 
-    chave_cliente = 'calculos'
-    chave_resultado_ops = 'resultados'
+    while(True):
 
-    numeros_cliente = server.take(chave_cliente, float, float)
+        chave_cliente = 'calculos'
+        chave_resultado_ops = 'resultados'
 
-    if numeros_cliente == -1:
-        print("Tupla não encontrada!")
-    else:
-        primeiro_numero = numeros_cliente[1]
-        segundo_numero = numeros_cliente[2]
+        numeros_cliente = server.take((chave_cliente, 10, 10))
 
-        soma_numeros = soma(primeiro_numero, segundo_numero)
-        sub_numeros = subtrai(primeiro_numero, segundo_numero)
-        mult_numeros = multiplica(primeiro_numero, segundo_numero)
-        div_numeros = divisao(primeiro_numero, segundo_numero)
+        if numeros_cliente == -1:
+            print("Tupla não encontrada!")
+        else:
+            primeiro_numero = numeros_cliente[1]
+            segundo_numero = numeros_cliente[2]
 
-        tupla_resposta = tuple(chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
+            soma_numeros = soma(primeiro_numero, segundo_numero)
+            sub_numeros = subtrai(primeiro_numero, segundo_numero)
+            mult_numeros = multiplica(primeiro_numero, segundo_numero)
+            div_numeros = divisao(primeiro_numero, segundo_numero)
 
-        server.tuple_space.write(tupla_resposta)
+            tupla_resposta = (chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
+
+            server.write(tupla_resposta)
+            print("Tupla resposta escrita!")
