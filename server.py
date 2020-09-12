@@ -1,7 +1,6 @@
 from xmlrpc.server import SimpleXMLRPCServer
 from tuplespace import TupleSpace
 
-
 class Server:
     _server_methods = [
         'hello_world',
@@ -18,10 +17,7 @@ class Server:
         for method in self._server_methods:
             self._server.register_function(getattr(self, method))
 
-    def hello_world(self):
-        return "hello world"
-
-    def write(self, t):
+    def write(self):
         t = tuple(t)
         return self.tuple_space.write(t)
 

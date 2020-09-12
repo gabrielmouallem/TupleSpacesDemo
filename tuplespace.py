@@ -1,14 +1,27 @@
 import threading
 
+def syncronized(func):
+    
+    def sync(self, *args, **kws):
+
+        self.blocked.acquire()
+
+        try:
+            return func(self, *args, **kws)
+        finally:
+            self.blocked.release()
+
+    return sync
+
 class TupleSpace:
 
     def __init__(self):
-        self.new_tuple = threading.Condition()
         self.blocked = threading.Condition()
         self.length = 0
         self.tuples = []
 
     #insere a tupla no espaço de tuplas
+    @syncronized
     def write(self, t):
 
         #será inserida no final de uma lista (representando o espaço de tuplas)
@@ -16,9 +29,7 @@ class TupleSpace:
         if self.verifyTuple(t):
             self.tuples.append(t)
             self.length += 1
-            
-            #notifica todos os computadores de que uma nova tupla foi inserida
-            #self.new_tuple.notifyAll()
+            self.blocked.notify_all()
         else:
             raise ValueError("Por favor, insira uma tupla!")
 
@@ -62,9 +73,10 @@ class TupleSpace:
         self.length -= 1
 
     #irá procurar por uma tupla e retorná-la
+    @syncronized
     def getTuple(self, t):
 
-        #self.blocked.wait()
+        self.blocked.wait()
         found = True
 
         #espaço de tuplas está vazio
