@@ -5,10 +5,10 @@ if __name__ == "__main__":
     server = ServerProxy("http://localhost:8000", allow_none=True)
 
     chave = 'calculos'
-    chave_resposta = 'resultados'
+    # chave_resposta = 'resultados'
 
-    primeiro_num = 10 # float(input(print("Digite o primeiro número: ")))
-    segundo_num = 10 # float(input(print("Digite o segundo número: ")))
+    primeiro_num = 11 # float(input(print("Digite o primeiro número: ")))
+    segundo_num = 11 # float(input(print("Digite o segundo número: ")))
 
     tupla = (chave, primeiro_num, segundo_num)
     server.write(tupla)

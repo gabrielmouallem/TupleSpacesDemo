@@ -25,15 +25,15 @@ if __name__ == "__main__":
         chave_cliente = 'calculos'
         chave_resultado_ops = 'resultados'
 
-        numeros_cliente = server.take((chave_cliente, 10, 10))['data']
+        numeros_cliente = server.take((chave_cliente, 0, 0))
 
         print(numeros_cliente)
 
-        if numeros_cliente == -1:
+        if numeros_cliente['data'] == -1:
             print("Tupla não encontrada!")
         else:
-            primeiro_numero = numeros_cliente[1]
-            segundo_numero = numeros_cliente[2]
+            primeiro_numero = numeros_cliente['data'][1]
+            segundo_numero = numeros_cliente['data'][2]
 
             soma_numeros = soma(primeiro_numero, segundo_numero)
             sub_numeros = subtrai(primeiro_numero, segundo_numero)
@@ -41,6 +41,9 @@ if __name__ == "__main__":
             div_numeros = divisao(primeiro_numero, segundo_numero)
 
             tupla_resposta = (chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
+            resposta = tuple(server.read(tupla_resposta)['data'])
 
-            server.write(tupla_resposta)
-            print("Tupla resposta escrita!")
+            print(tupla_resposta, resposta)
+            if tupla_resposta != resposta:
+                server.write(tupla_resposta)
+                print("Tupla resposta escrita!")
