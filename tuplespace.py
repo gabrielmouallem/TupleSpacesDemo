@@ -1,28 +1,28 @@
 import threading
 
 
-def syncronized(func):
-    def sync(self, *args, **kws):
-
-        self.blocked.acquire()
-
-        try:
-            return func(self, *args, **kws)
-        finally:
-            self.blocked.release()
-
-    return sync
+# def syncronized(func):
+#     def sync(self, *args, **kws):
+#
+#         self.blocked.acquire()
+#
+#         try:
+#             return func(self, *args, **kws)
+#         finally:
+#             self.blocked.release()
+#
+#     return sync
 
 
 class TupleSpace:
 
     def __init__(self):
-        self.blocked = threading.Condition()
+        # self.blocked = threading.Condition()
         self.length = 0
         self.tuples = []
 
     # insere a tupla no espaço de tuplas
-    @syncronized
+    # @syncronized
     def write(self, t):
 
         # será inserida no final de uma lista (representando o espaço de tuplas)
@@ -30,16 +30,16 @@ class TupleSpace:
         if self.verifyTuple(t):
             self.tuples.append(t)
             self.length += 1
-            self.blocked.notify_all()
+            # self.blocked.notify_all()
             return {
                 "data": t,
-                "response": "Tupla " + t + " escrita com sucesso!",
+                "response": "Tupla " + str(t) + " escrita com sucesso!",
                 "status": "OK"
             }
         else:
             return {
-                "data": None,
-                "response": "Erro ao escrever tupla " + t + ".",
+                "data": -1,
+                "response": "Erro ao escrever tupla " + str(t) + ".",
                 "status": "ERROR"
             }
 
@@ -54,18 +54,18 @@ class TupleSpace:
             if tuple_found == -1:
                 return {
                     "data": -1,
-                    "response": "Tupla " + t + " não encontrada.",
+                    "response": "Tupla " + str(t) + " não encontrada.",
                     "status": "ERROR"
                 }
 
             return {
-                "data": None,
-                "response": "Tupla " + t + " encontrada.",
+                "data": t,
+                "response": "Tupla " + str(t) + " encontrada.",
                 "status": "OK"
             }
         else:
             return {
-                "data": None,
+                "data": -1,
                 "response": "Por favor insira uma tupla!",
                 "status": "ERROR"
             }
@@ -81,7 +81,7 @@ class TupleSpace:
             if tuple_found == -1:
                 return {
                     "data": -1,
-                    "response": "Tupla " + t + " não encontrada.",
+                    "response": "Tupla " + str(t) + " não encontrada.",
                     "status": "ERROR"
                 }
 
@@ -89,13 +89,13 @@ class TupleSpace:
             self.removeTuple(tuple_found)
 
             return {
-                "data": None,
-                "response": "Tupla " + t + " encontrada.",
+                "data": t,
+                "response": "Tupla " + str(t) + " encontrada.",
                 "status": "OK"
             }
         else:
             return {
-                "data": None,
+                "data": -1,
                 "response": "Por favor insira uma tupla!",
                 "status": "ERROR"
             }
@@ -108,31 +108,31 @@ class TupleSpace:
             self.length -= 1
 
             return {
-                "data": None,
-                "response": "Tupla" + t + "removida com sucesso!",
+                "data": t,
+                "response": "Tupla" + str(t) + "removida com sucesso!",
                 "status": "OK"
             }
 
 
         except Exception as ex:
             return {
-                "data": None,
+                "data": -1,
                 "response": "Não foi possível remover a tupla. " + str(ex),
                 "status": "ERROR"
             }
 
     # irá procurar por uma tupla e retorná-la
-    @syncronized
+    # @syncronized
     def getTuple(self, t):
 
-        self.blocked.wait()
+        # self.blocked.wait()
         found = True
 
         # espaço de tuplas está vazio
         if self.length == 0:
             return {
                 "data": -1,
-                "response": "Não foi possível remover a tupla. " + str(ex),
+                "response": "Não foi possível remover a tupla.",
                 "status": "ERROR"
             }
 
@@ -160,7 +160,7 @@ class TupleSpace:
                 if found:
                     return {
                         "data": current_tuple,
-                        "response": "Tupla encontrada" + current_tuple + ".",
+                        "response": "Tupla encontrada" + str(current_tuple) + ".",
                         "status": "OK"
                     }
 
