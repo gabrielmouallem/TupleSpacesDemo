@@ -25,7 +25,7 @@ if __name__ == "__main__":
         chave_cliente = 'calculos'
         chave_resultado_ops = 'resultados'
 
-        numeros_cliente = server.take((chave_cliente, 11, 11))
+        numeros_cliente = server.take((chave_cliente, int(), int()))
 
         if numeros_cliente['data'] == -1:
             print("Tupla não encontrada ou já foi escrita.")

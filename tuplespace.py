@@ -136,10 +136,14 @@ class TupleSpace:
                 current_tuple = tup
 
                 for index in range(len(t)):
-
-                    # verfica se os valores e os tipos das tuplas são iguais
-                    if t[index] == current_tuple[index] and type(t[index]) == type(current_tuple[index]):
-                        continue
+                    if index == 0:
+                        # verifica se o primeiro valor é igual
+                        if t[index] == current_tuple[index]:
+                            continue
+                    else:
+                        # verifica se os valores e os tipos das tuplas são iguais
+                        if type(t[index]) == type(current_tuple[index]):
+                            continue
 
                     found = False
                     break
