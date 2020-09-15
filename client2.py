@@ -1,4 +1,5 @@
 from xmlrpc.client import ServerProxy
+import time
 
 def soma(num1, num2):
     return float(num1 + num2)
@@ -19,17 +20,19 @@ def divisao(num1, num2):
 if __name__ == "__main__":
     
     server = ServerProxy("http://localhost:8000", allow_none=True)
-
+    
     while(True):
 
         chave_cliente = 'calculos'
         chave_resultado_ops = 'resultados'
 
-        numeros_cliente = server.take((chave_cliente, int(), int()))
+        numeros_cliente = server.take((chave_cliente, 12, 12))
 
         if numeros_cliente['data'] == -1:
-            print("Tupla não encontrada ou já foi escrita.")
+            #print("Tupla não encontrada ou já foi escrita.")
+            pass
         else:
+            print(numeros_cliente)
             primeiro_numero = numeros_cliente['data'][1]
             segundo_numero = numeros_cliente['data'][2]
 

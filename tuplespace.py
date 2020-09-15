@@ -1,36 +1,24 @@
 import threading
 
-
-# def syncronized(func):
-#     def sync(self, *args, **kws):
-#
-#         self.blocked.acquire()
-#
-#         try:
-#             return func(self, *args, **kws)
-#         finally:
-#             self.blocked.release()
-#
-#     return sync
-
-
 class TupleSpace:
 
     def __init__(self):
-        # self.blocked = threading.Condition()
+        self.blocked = threading.Lock()
         self.length = 0
         self.tuples = []
 
     # insere a tupla no espaço de tuplas
-    # @syncronized
     def write(self, t):
 
         # será inserida no final de uma lista (representando o espaço de tuplas)
         # sem afetar as tuplas que já foram inseridas
         if self.verifyTuple(t):
+
+            #self.blocked.acquire()
             self.tuples.append(t)
             self.length += 1
-            # self.blocked.notify_all()
+            #self.blocked.release()
+
             return {
                 "data": t,
                 "response": "Tupla " + str(t) + " escrita com sucesso!",
@@ -48,10 +36,13 @@ class TupleSpace:
 
         if self.verifyTuple(t):
             # irá procurar por uma tupla no espaço e retorná-la
+            self.blocked.acquire()
             tuple_found = self.getTuple(t)
+            self.blocked.release()
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
+                
                 return {
                     "data": -1,
                     "response": "Tupla " + str(t) + " não encontrada.",
@@ -59,7 +50,7 @@ class TupleSpace:
                 }
 
             return {
-                "data": t,
+                "data": tuple_found,
                 "response": "Tupla " + str(t) + " encontrada.",
                 "status": "OK"
             }
@@ -75,7 +66,9 @@ class TupleSpace:
 
         if self.verifyTuple(t):
             # irá procurar por uma tupla, retornar e removê-la do espaço
+            self.blocked.acquire()
             tuple_found = self.getTuple(t)
+            self.blocked.release()
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
@@ -89,8 +82,8 @@ class TupleSpace:
             self.removeTuple(tuple_found)
 
             return {
-                "data": t,
-                "response": "Tupla " + str(t) + " encontrada.",
+                "data": tuple_found,
+                "response": "Tupla " + str(tuple_found) + " encontrada.",
                 "status": "OK"
             }
         else:
@@ -114,10 +107,8 @@ class TupleSpace:
             return -1
 
     # irá procurar por uma tupla e retorná-la
-    # @syncronized
     def getTuple(self, t):
 
-        # self.blocked.wait()
         found = True
 
         # espaço de tuplas está vazio
@@ -128,7 +119,6 @@ class TupleSpace:
         # retorna todas as tuplas
         if len(t) == 0:
             return self.getAllTuples()
-
 
         else:
             # procura a tupla no espaço
@@ -141,22 +131,31 @@ class TupleSpace:
                         # verifica se o primeiro valor é igual
                         if t[index] == current_tuple[index]:
                             continue
+                        else:
+                            found = False
+                            break
                     else:
-                        # verifica se os valores e os tipos das tuplas são iguais
-                        if type(t[index]) == type(current_tuple[index]):
-                            continue
 
-                    found = False
-                    break
+                        if not t[index] or t[index] == 0:
+                            # verifica se os valores e os tipos das tuplas são iguais
+                            if type(t[index]) == type(current_tuple[index]):
+                                continue
+                            else:
+                                found = False
+                                break
+                        else:
+                            # verifica se os valores e os tipos das tuplas são iguais
+                            if type(t[index]) == type(current_tuple[index]) and t[index] == current_tuple[index]:
+                                continue
+                            else:
+                                found = False
+                                break
 
                 # se encontrou uma tupla, retorna ela
                 if found:
                     return current_tuple
 
             return -1
-
-        # notifica todos os outros computadores que o espaço não tá mais bloqueado
-        # self.blocked.notifyAll()
 
     # retorna todas as tuplas que foram inseridas no espaço
     def getAllTuples(self):
