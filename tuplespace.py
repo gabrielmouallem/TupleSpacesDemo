@@ -89,7 +89,7 @@ class TupleSpace:
         else:
             return {
                 "data": -1,
-                "response": "Por favor insira uma tupla!",
+                "response": "Tupla em uso ou não existe.",
                 "status": "ERROR"
             }
 
