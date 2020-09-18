@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import server as sv
+from xmlrpc.client import ServerProxy
 
 class MainView():
 
@@ -92,33 +93,42 @@ class MainView():
         self.operation = operation.get()
     
     def initializeServer(self):
-        self.server = sv.Server()
+        self.server = ServerProxy("http://localhost:8000", allow_none=True)
         self.serverOn = True
 
     def okClick(self, event, parameters):
         parameters = parameters.get()
 
         if(parameters == ""):
-            self.serverResponse("Digite os parâmetros.")
+            self.serverResponse("Digite os parâmetros.", "ERROR")
             return
 
         if(self.serverOn == False):
-            responseString = self.initializeServer(('', 8000))
+            self.initializeServer()
 
         if(self.operation == "read"):
-            responseString = self.server.read()
+            responseString = self.server.read()['response']
+            responseStatus = self.server.take()['status']
 
         elif(self.operation == "write"):
-            responseString = self.server.write()
+            responseString = self.server.write()['response']
+            responseStatus = self.server.take()['status']
 
         elif(self.operation == "take"):
-            responseString = self.server.take()
+            responseString = self.server.take()['response']
+            responseStatus = self.server.take()['status']
 
         else: 
-            self.serverResponse("Escolha um tipo de operação válido.")
+            self.serverResponse("Escolha um tipo de operação válido.", "ERROR")
             return
 
-        self.serverResponse(responseString)
+        self.serverResponse(responseString, responseStatus)
     
-    def serverResponse(self, responseString):
+    def serverResponse(self, responseString, responseStatus):
         self.labelResponseString.set(responseString)
+
+        if(responseStatus == "ERROR"):
+            self.labelResponse.configure(fg="red")
+        else:
+            self.labelResponse.configure(fg="#329C28")
+
