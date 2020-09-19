@@ -15,8 +15,7 @@ class MainView():
         self.menubar = tk.Menu(self.mainTk, bg='#366998')
         self.blankmenu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="".ljust(83), menu=self.blankmenu, activebackground="#366998")
-        self.helpMenu = tk.Menu(self.menubar, bg='#E66C63')
-        self.menubar.add_cascade(label="Ajuda", menu=self.helpMenu, foreground="white", activebackground="#366998")
+        self.menubar.add_command(label="Ajuda", foreground="white", activebackground="#366998", command=lambda:self.helpClick())
         self.mainTk.config(menu=self.menubar)
 
         self.frameTitle = tk.Frame(self.mainTk)
@@ -36,7 +35,7 @@ class MainView():
         self.labelServer = tk.Label(self.frameServer, text="Server:", bg="#232323", fg="#329C28", width=47)
         self.labelServer.pack(pady=(10, 0))
 
-        self.labelResponseString = tk.StringVar(value="")
+        self.labelResponseString = tk.StringVar(value="Exemplo de input: \nvalor::tipo")
         self.labelResponse = tk.Label(self.frameReturn, textvariable=self.labelResponseString, bg="#232323", fg="#329C28", width=47, height=3)
         self.labelResponse.pack(pady=(0, 10))
 
@@ -88,13 +87,28 @@ class MainView():
                 self.entry.insert(0, self.listForTable[i][j])
             
     def helpClick(self):
-        pass
+        helpTk = tk.Tk()
+        helpTk.resizable(width=False, height=False)
+        helpTk.title("Ajuda")
+        helpTk.geometry('400x300')
+
+        frameHelp = tk.Frame(helpTk)
+        frameHelp.pack(pady=(10, 0))
+
+        labelHelp = tk.Label(frameHelp, text="Texto de ajuda\nvai aqui", font=(None, 14))
+        labelHelp.pack()
+
+        helpTk.mainloop()
 
     def operationClick(self, event, operation):
         self.selectedOption = operation.get()
     
     def okClick(self, event, parameters):
         parameters = parameters.get()
+        if(parameters == ""):
+            self.serverResponse("Digite os parâmetros.", "ERROR")
+            return
+            
         tupleItemsWithType = parameters.split("&&")
         items = []
         for index, item in enumerate(tupleItemsWithType):
@@ -149,10 +163,6 @@ class MainView():
         
         inputTuple = tuple(items)
         print(inputTuple)
-
-        if(parameters == ""):
-            self.serverResponse("Digite os parâmetros.", "ERROR")
-            return
 
         if(self.selectedOption == "read"):
             server_return = self.server.read(inputTuple)
