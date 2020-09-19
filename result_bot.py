@@ -29,10 +29,10 @@ if __name__ == "__main__":
         numeros_cliente = server.read((chave_cliente, int(), int()))
 
         if numeros_cliente['data'] == -1:
-            print("Tupla não encontrada ou já foi escrita.")
+            print("Não achou a tupla calculos.")
             pass
         else:
-            print(numeros_cliente)
+            print("Tupla calculos encontrada.")
             primeiro_numero = numeros_cliente['data'][1]
             segundo_numero = numeros_cliente['data'][2]
 
@@ -41,15 +41,19 @@ if __name__ == "__main__":
             mult_numeros = multiplica(primeiro_numero, segundo_numero)
             div_numeros = divisao(primeiro_numero, segundo_numero)
 
-            temp_tupla_resposta = (chave_resultado_ops, float(), float(), float(), float())
+            temp_tupla_resposta = (chave_resultado_ops, float(0.0), float(0.0), float(0.0), float(0.0))
             tupla_resposta = (chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
 
-            take_tupla_resposta = server.take(temp_tupla_resposta)
+            read_tupla_resposta = server.read(temp_tupla_resposta)
 
-            if take_tupla_resposta['data'] != -1:
-                print("Tupla ja existia, escrevendo nela")
+            if read_tupla_resposta['data'] == -1:
+                print(read_tupla_resposta['data'])
+                print("Tupla resposta não existia, resposta escrita!")
                 server.write(tupla_resposta)
             else:
-                if tupla_resposta != take_tupla_resposta['data'] or take_tupla_resposta['data'] == -1:
+                if tupla_resposta != read_tupla_resposta['data']:
+                    server.take(temp_tupla_resposta)
                     server.write(tupla_resposta)
-                    print("Tupla resposta escrita!")
+                    print("Tupla já existia, resposta escrita!")
+                else:
+                    print("Resposta não mudou, nada a fazer...")

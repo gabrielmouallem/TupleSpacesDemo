@@ -45,13 +45,13 @@ class TupleSpace:
                 
                 return {
                     "data": -1,
-                    "response": "Tupla " + str(t) + " não encontrada.",
+                    "response": "Tupla " + str(t) + " não foi lida.",
                     "status": "ERROR"
                 }
 
             return {
                 "data": tuple_found,
-                "response": "Tupla " + str(t) + " encontrada.",
+                "response": "Tupla " + str(t) + " foi lida.",
                 "status": "OK"
             }
         else:
@@ -74,7 +74,7 @@ class TupleSpace:
             if tuple_found == -1:
                 return {
                     "data": -1,
-                    "response": "Tupla " + str(t) + " não encontrada.",
+                    "response": "Tupla " + str(t) + " não foi obtida.",
                     "status": "ERROR"
                 }
 
@@ -83,7 +83,7 @@ class TupleSpace:
 
             return {
                 "data": tuple_found,
-                "response": "Tupla " + str(tuple_found) + " encontrada.",
+                "response": "Tupla " + str(tuple_found) + " foi obtida.",
                 "status": "OK"
             }
         else:
@@ -122,9 +122,7 @@ class TupleSpace:
 
         else:
             # procura a tupla no espaço
-            for tup in self.tuples:
-
-                current_tuple = tup
+            for index, current_tuple in enumerate(self.tuples):
 
                 for index in range(len(t)):
                     if index == 0:
@@ -135,22 +133,11 @@ class TupleSpace:
                             found = False
                             break
                     else:
-
-                        if not t[index] or t[index] == 0:
-                            # verifica se os valores e os tipos das tuplas são iguais
-                            if type(t[index]) == type(current_tuple[index]):
-                                continue
-                            else:
-                                found = False
-                                break
+                        if type(t[index]) == type(current_tuple[index]):
+                            continue
                         else:
-                            # verifica se os valores e os tipos das tuplas são iguais
-                            if type(t[index]) == type(current_tuple[index]) and t[index] == current_tuple[index]:
-                                continue
-                            else:
-                                found = False
-                                break
-
+                            found = False
+                            break
                 # se encontrou uma tupla, retorna ela
                 if found:
                     return current_tuple

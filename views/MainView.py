@@ -1,13 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-import server as sv
 from xmlrpc.client import ServerProxy
 
 class MainView():
 
     def __init__(self, mainTk):
-        self.serverOn = False
+        self.server = ServerProxy("http://localhost:8000", allow_none=True)
+
         self.mainTk = mainTk
         self.mainTk.title("Trabalho SD")
         self.mainTk.geometry('400x430')
@@ -36,7 +36,7 @@ class MainView():
         self.labelServer = tk.Label(self.frameServer, text="Server:", bg="#232323", fg="#329C28", width=47)
         self.labelServer.pack(pady=(10, 0))
 
-        self.labelResponseString = tk.StringVar(value="resposta do server aqui")
+        self.labelResponseString = tk.StringVar(value="")
         self.labelResponse = tk.Label(self.frameReturn, textvariable=self.labelResponseString, bg="#232323", fg="#329C28", width=47, height=3)
         self.labelResponse.pack(pady=(0, 10))
 
@@ -48,6 +48,7 @@ class MainView():
         self.buttonSubmit.bind("<Button-1>", lambda event, arg=self.inputParameters: self.okClick(event, self.inputParameters))
 
         self.operation = tk.StringVar()
+        self.selectedOption = None
         self.combobox = ttk.Combobox(self.frameInput, width = 10 , textvariable = self.operation)
         self.combobox.pack(side="right", padx=(0,5))
         self.operationsList = ["read", "write", "take"]
@@ -90,33 +91,83 @@ class MainView():
         pass
 
     def operationClick(self, event, operation):
-        self.operation = operation.get()
+        self.selectedOption = operation.get()
     
-    def initializeServer(self):
-        self.server = ServerProxy("http://localhost:8000", allow_none=True)
-        self.serverOn = True
-
     def okClick(self, event, parameters):
         parameters = parameters.get()
+        tupleItemsWithType = parameters.split("&&")
+        items = []
+        for index, item in enumerate(tupleItemsWithType):
+            itemValue = item.split("::")[0]
+            itemType = item.split("::")[1]
+
+            if itemType == "string":
+                if itemValue == "":
+                    itemValue = str("")
+                else:
+                    itemValue = str(itemValue)
+
+            elif itemType == "int":
+                if itemValue == "":
+                    itemValue = int(0)
+                else:
+                    itemValue = int(itemValue)
+
+            elif itemType == "bool":
+                if itemValue == "":
+                    itemValue = bool(True)
+                if(itemValue == "False"):
+                    itemValue = False
+                elif(itemValue == "True"):
+                    itemValue = True
+
+            elif itemType == "float":
+                if itemValue == "":
+                    itemValue = float(0.00)
+                else:
+                    itemValue = float(itemValue)
+
+            elif itemType == "list":
+                if itemValue == "":
+                    itemValue = list([])
+                else:
+                    itemValue = list(itemValue)
+
+            elif itemType == "tuple":
+                if itemValue == "":
+                    itemValue = tuple(())
+                else:
+                    itemValue = tuple(itemValue)
+
+            elif itemType == "dict":
+                if itemValue == "":
+                    itemValue = dict({})
+                else:
+                    itemValue = eval(itemValue)        
+
+            items.append(itemValue)
+        
+        inputTuple = tuple(items)
+        print(inputTuple)
 
         if(parameters == ""):
             self.serverResponse("Digite os parâmetros.", "ERROR")
             return
 
-        if(self.serverOn == False):
-            self.initializeServer()
+        if(self.selectedOption == "read"):
+            server_return = self.server.read(inputTuple)
+            responseString = server_return['response']
+            responseStatus = server_return['status']
 
-        if(self.operation == "read"):
-            responseString = self.server.read()['response']
-            responseStatus = self.server.take()['status']
+        elif(self.selectedOption == "write"):
+            server_return = self.server.write(inputTuple)
+            responseString = server_return['response']
+            responseStatus = server_return['status']
 
-        elif(self.operation == "write"):
-            responseString = self.server.write()['response']
-            responseStatus = self.server.take()['status']
-
-        elif(self.operation == "take"):
-            responseString = self.server.take()['response']
-            responseStatus = self.server.take()['status']
+        elif(self.selectedOption == "take"):
+            server_return = self.server.take(inputTuple)
+            responseString = server_return['response']
+            responseStatus = server_return['status']
 
         else: 
             self.serverResponse("Escolha um tipo de operação válido.", "ERROR")
