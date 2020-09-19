@@ -1,10 +1,12 @@
 import threading
 
+# Único possível problema de implementação: como saber que um usuário (e qual usuário) deu take em uma tupla para previnir que outros usuários dêem write numa tupla com a mesa chave?
+# O getTuple bugava antes de ter o goToTypeChecks porque se ele trombasse uma tupla que o primeiro elemento fosse diferente da tupla de comparativo ele dava break e já saia
+
 class TupleSpace:
 
     def __init__(self):
         self.blocked = threading.Lock()
-        self.length = 0
         self.tuples = []
 
     # insere a tupla no espaço de tuplas
@@ -13,21 +15,28 @@ class TupleSpace:
         # será inserida no final de uma lista (representando o espaço de tuplas)
         # sem afetar as tuplas que já foram inseridas
         if self.verifyTuple(t):
+            print("write(): este object realmente é uma tupla.")
+            tuple_found = self.getTuple(t)
+            if tuple_found == -1:
+                self.tuples.append(t)
+                print("write(): tupla adicionada ao espaço de tuplas.")
+                return {
+                    "data": t,
+                    "response": "Tupla " + str(t) + "\nescrita com sucesso!",
+                    "status": "OK"
+                }
+            else:
+                return {
+                    "data": -1,
+                    "response": "Tupla " + str("("+str(t[0])+", ...)") + "\njá existe, você precisa obtê-la antes de escrevê-la.",
+                    "status": "ERROR"
+                }
 
-            #self.blocked.acquire()
-            self.tuples.append(t)
-            self.length += 1
-            #self.blocked.release()
-
-            return {
-                "data": t,
-                "response": "Tupla " + str(t) + " escrita com sucesso!",
-                "status": "OK"
-            }
         else:
+            print("write(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
-                "response": "Erro ao escrever tupla " + str(t) + ".",
+                "response": "Erro ao escrever tupla\n" + str(t) + ".",
                 "status": "ERROR"
             }
 
@@ -35,6 +44,7 @@ class TupleSpace:
     def read(self, t):
 
         if self.verifyTuple(t):
+            print("read(): este object realmente é uma tupla.")
             # irá procurar por uma tupla no espaço e retorná-la
             self.blocked.acquire()
             tuple_found = self.getTuple(t)
@@ -42,29 +52,30 @@ class TupleSpace:
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
-                
+                print("read(): a tupla não foi encontrada.")
                 return {
                     "data": -1,
-                    "response": "Tupla " + str(t) + " não foi lida.",
+                    "response": "Tupla " + str("("+str(t[0])+", ...)") + "\nnão foi lida.",
                     "status": "ERROR"
                 }
-
+            print("read(): a tupla foi encontrada e foi lida.")
             return {
                 "data": tuple_found,
-                "response": "Tupla " + str(t) + " foi lida.",
+                "response": "Tupla " + str(tuple_found) + "\nfoi lida.",
                 "status": "OK"
             }
         else:
+            print("read(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
-                "response": "Por favor insira uma tupla!",
+                "response": "Tupla em uso ou não existe.",
                 "status": "ERROR"
             }
 
     # lê uma tupla do espaço de tuplas
     def take(self, t):
-
         if self.verifyTuple(t):
+            print("take(): este object realmente é uma tupla.")
             # irá procurar por uma tupla, retornar e removê-la do espaço
             self.blocked.acquire()
             tuple_found = self.getTuple(t)
@@ -72,21 +83,23 @@ class TupleSpace:
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
+                print("take(): a tupla não foi encontrada.")
                 return {
                     "data": -1,
-                    "response": "Tupla " + str(t) + " não foi obtida.",
+                    "response": "Tupla " + str(t) + "\nnão foi obtida.",
                     "status": "ERROR"
                 }
 
             # remove a tupla do espaço de tuplas
             self.removeTuple(tuple_found)
-
+            print("take(): a tupla foi encontrada e foi removida.")
             return {
                 "data": tuple_found,
-                "response": "Tupla " + str(tuple_found) + " foi obtida.",
+                "response": "Tupla " + str(tuple_found) + "\nfoi obtida.",
                 "status": "OK"
             }
         else:
+            print("take(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
                 "response": "Tupla em uso ou não existe.",
@@ -98,21 +111,23 @@ class TupleSpace:
         try:
             # remove a tupla do espaço e decrementa o tamanho do espaço
             self.tuples.remove(t)
-            self.length -= 1
-
+            print("removeTuple(): Removida com sucesso!")
             return t
 
 
         except Exception as ex:
+            print("removeTuple(): Erro ao remover, talvez a tupla não exista.")
             return -1
 
     # irá procurar por uma tupla e retorná-la
     def getTuple(self, t):
 
+        goToTypeChecks = False
         found = True
 
         # espaço de tuplas está vazio
-        if self.length == 0:
+        if len(self.tuples) == 0:
+            print("getTuple(): Espaço de tuplas vazio.")
             return -1
 
         # não foi passado nenhum parâmetro
@@ -122,24 +137,29 @@ class TupleSpace:
 
         else:
             # procura a tupla no espaço
-            for index, current_tuple in enumerate(self.tuples):
+            for _, current_tuple in enumerate(self.tuples):
 
                 for index in range(len(t)):
                     if index == 0:
                         # verifica se o primeiro valor é igual
                         if t[index] == current_tuple[index]:
+                            goToTypeChecks = True
                             continue
                         else:
+                            print("getTuple(): Primeiro elemento da tupla não bate. " + str(t[index]) + " " + str(current_tuple[index]))
                             found = False
                             break
                     else:
-                        if type(t[index]) == type(current_tuple[index]):
+                        if type(t[index]) == type(current_tuple[index]) and goToTypeChecks:
+                            found = True
                             continue
                         else:
+                            print("getTuple(): Os tipos da tupla não batem.")
                             found = False
                             break
                 # se encontrou uma tupla, retorna ela
                 if found:
+                    print("getTuple(): Tupla encontrada.")
                     return current_tuple
 
             return -1
@@ -154,7 +174,7 @@ class TupleSpace:
 
     # retorna a quantidade de tuplas inseridas no espaço
     def getTupleSpaceLength(self):
-        return self.length
+        return len(self.tuples)
 
     # verifica se a variável é uma tupla
     def verifyTuple(self, t):

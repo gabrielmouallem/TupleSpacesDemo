@@ -41,18 +41,16 @@ if __name__ == "__main__":
             mult_numeros = multiplica(primeiro_numero, segundo_numero)
             div_numeros = divisao(primeiro_numero, segundo_numero)
 
-            temp_tupla_resposta = (chave_resultado_ops, float(0.0), float(0.0), float(0.0), float(0.0))
             tupla_resposta = (chave_resultado_ops, soma_numeros, sub_numeros, mult_numeros, div_numeros)
 
-            read_tupla_resposta = server.read(temp_tupla_resposta)
+            read_tupla_resposta = server.read(tupla_resposta)
 
             if read_tupla_resposta['data'] == -1:
-                print(read_tupla_resposta['data'])
                 print("Tupla resposta não existia, resposta escrita!")
                 server.write(tupla_resposta)
             else:
-                if tupla_resposta != read_tupla_resposta['data']:
-                    server.take(temp_tupla_resposta)
+                if tupla_resposta != tuple(read_tupla_resposta['data']):
+                    server.take(tupla_resposta)
                     server.write(tupla_resposta)
                     print("Tupla já existia, resposta escrita!")
                 else:
