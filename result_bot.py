@@ -2,15 +2,23 @@ from xmlrpc.client import ServerProxy
 import time
 
 def soma(num1, num2):
+    num1 = float(num1)
+    num2 = float(num2)
     return float(num1 + num2)
 
 def subtrai(num1, num2):
+    num1 = float(num1)
+    num2 = float(num2)
     return float(num1 - num2)
 
 def multiplica(num1, num2):
+    num1 = float(num1)
+    num2 = float(num2)
     return float(num1 * num2)
 
 def divisao(num1, num2):
+    num1 = float(num1)
+    num2 = float(num2)
     try:
         divisao = num1/num2
         return float(divisao)
