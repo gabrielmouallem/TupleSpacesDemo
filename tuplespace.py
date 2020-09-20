@@ -15,11 +15,11 @@ class TupleSpace:
         # será inserida no final de uma lista (representando o espaço de tuplas)
         # sem afetar as tuplas que já foram inseridas
         if self.verifyTuple(t):
-            print("write(): este object realmente é uma tupla.")
+            # print("write(): este object realmente é uma tupla.")
             tuple_found = self.getTuple(t)
             if tuple_found == -1:
                 self.tuples.append(t)
-                print("write(): tupla adicionada ao espaço de tuplas.")
+                # print("write(): tupla adicionada ao espaço de tuplas.")
                 return {
                     "data": t,
                     "response": "Tupla " + str(t) + "\nescrita com sucesso!",
@@ -33,7 +33,7 @@ class TupleSpace:
                 }
 
         else:
-            print("write(): este object não é uma tupla, erro.")
+            # print("write(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
                 "response": "Erro ao escrever tupla\n" + str(t) + ".",
@@ -44,7 +44,7 @@ class TupleSpace:
     def read(self, t):
 
         if self.verifyTuple(t):
-            print("read(): este object realmente é uma tupla.")
+            # print("read(): este object realmente é uma tupla.")
             # irá procurar por uma tupla no espaço e retorná-la
             self.blocked.acquire()
             tuple_found = self.getTuple(t)
@@ -52,20 +52,20 @@ class TupleSpace:
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
-                print("read(): a tupla não foi encontrada.")
+                # print("read(): a tupla não foi encontrada.")
                 return {
                     "data": -1,
                     "response": "Tupla " + str("("+str(t[0])+", ...)") + "\nnão foi lida.",
                     "status": "ERROR"
                 }
-            print("read(): a tupla foi encontrada e foi lida.")
+            # print("read(): a tupla foi encontrada e foi lida.")
             return {
                 "data": tuple_found,
                 "response": "Tupla " + str(tuple_found) + "\nfoi lida.",
                 "status": "OK"
             }
         else:
-            print("read(): este object não é uma tupla, erro.")
+            # print("read(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
                 "response": "Tupla em uso ou não existe.",
@@ -75,7 +75,7 @@ class TupleSpace:
     # lê uma tupla do espaço de tuplas
     def take(self, t):
         if self.verifyTuple(t):
-            print("take(): este object realmente é uma tupla.")
+            # print("take(): este object realmente é uma tupla.")
             # irá procurar por uma tupla, retornar e removê-la do espaço
             self.blocked.acquire()
             tuple_found = self.getTuple(t)
@@ -83,7 +83,7 @@ class TupleSpace:
 
             # tupla não encontrada ou espaço de tuplas está vazio
             if tuple_found == -1:
-                print("take(): a tupla não foi encontrada.")
+                # print("take(): a tupla não foi encontrada.")
                 return {
                     "data": -1,
                     "response": "Tupla " + str(t) + "\nnão foi obtida.",
@@ -92,14 +92,14 @@ class TupleSpace:
 
             # remove a tupla do espaço de tuplas
             self.removeTuple(tuple_found)
-            print("take(): a tupla foi encontrada e foi removida.")
+            # print("take(): a tupla foi encontrada e foi removida.")
             return {
                 "data": tuple_found,
                 "response": "Tupla " + str(tuple_found) + "\nfoi obtida.",
                 "status": "OK"
             }
         else:
-            print("take(): este object não é uma tupla, erro.")
+            # print("take(): este object não é uma tupla, erro.")
             return {
                 "data": -1,
                 "response": "Tupla em uso ou não existe.",
@@ -111,12 +111,12 @@ class TupleSpace:
         try:
             # remove a tupla do espaço e decrementa o tamanho do espaço
             self.tuples.remove(t)
-            print("removeTuple(): Removida com sucesso!")
+            # print("removeTuple(): Removida com sucesso!")
             return t
 
 
         except Exception as ex:
-            print("removeTuple(): Erro ao remover, talvez a tupla não exista.")
+            # print("removeTuple(): Erro ao remover, talvez a tupla não exista.")
             return -1
 
     # irá procurar por uma tupla e retorná-la
@@ -127,7 +127,7 @@ class TupleSpace:
 
         # espaço de tuplas está vazio
         if len(self.tuples) == 0:
-            print("getTuple(): Espaço de tuplas vazio.")
+            # print("getTuple(): Espaço de tuplas vazio.")
             return -1
 
         # não foi passado nenhum parâmetro
@@ -146,7 +146,7 @@ class TupleSpace:
                             goToTypeChecks = True
                             continue
                         else:
-                            print("getTuple(): Primeiro elemento da tupla não bate. " + str(t[index]) + " " + str(current_tuple[index]))
+                            # print("getTuple(): Primeiro elemento da tupla não bate. " + str(t[index]) + " " + str(current_tuple[index]))
                             found = False
                             break
                     else:
@@ -154,12 +154,12 @@ class TupleSpace:
                             found = True
                             continue
                         else:
-                            print("getTuple(): Os tipos da tupla não batem.")
+                            # print("getTuple(): Os tipos da tupla não batem.")
                             found = False
                             break
                 # se encontrou uma tupla, retorna ela
                 if found:
-                    print("getTuple(): Tupla encontrada.")
+                    # print("getTuple(): Tupla encontrada.")
                     return current_tuple
 
             return -1

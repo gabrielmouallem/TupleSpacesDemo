@@ -6,7 +6,7 @@ from xmlrpc.client import ServerProxy
 class MainView():
 
     def __init__(self, mainTk):
-        self.server = ServerProxy("https://aed78bdf91f0.ngrok.io", allow_none=True)
+        self.server = ServerProxy("http://189.84.197.211:8000", allow_none=True)
 
         self.mainTk = mainTk
         self.mainTk.title("Trabalho SD")

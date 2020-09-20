@@ -37,10 +37,8 @@ if __name__ == "__main__":
         numeros_cliente = server.read((chave_cliente, int(), int()))
 
         if numeros_cliente['data'] == -1:
-            print("Não achou a tupla calculos.")
             pass
         else:
-            print("Tupla calculos encontrada.")
             primeiro_numero = numeros_cliente['data'][1]
             segundo_numero = numeros_cliente['data'][2]
 
@@ -54,12 +52,9 @@ if __name__ == "__main__":
             read_tupla_resposta = server.read(tupla_resposta)
 
             if read_tupla_resposta['data'] == -1:
-                print("Tupla resposta não existia, resposta escrita!")
                 server.write(tupla_resposta)
             else:
                 if tupla_resposta != tuple(read_tupla_resposta['data']):
                     server.take(tupla_resposta)
                     server.write(tupla_resposta)
-                    print("Tupla já existia, resposta escrita!")
                 else:
-                    print("Resposta não mudou, nada a fazer...")
