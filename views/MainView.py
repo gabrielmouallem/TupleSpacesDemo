@@ -6,7 +6,7 @@ from xmlrpc.client import ServerProxy
 class MainView():
 
     def __init__(self, mainTk):
-        self.server = ServerProxy("http://localhost:8000", allow_none=True)
+        self.server = ServerProxy("https://aed78bdf91f0.ngrok.io", allow_none=True)
 
         self.mainTk = mainTk
         self.mainTk.title("Trabalho SD")
@@ -35,7 +35,7 @@ class MainView():
         self.labelServer = tk.Label(self.frameServer, text="Server:", bg="#232323", fg="#329C28", width=47)
         self.labelServer.pack(pady=(10, 0))
 
-        self.labelResponseString = tk.StringVar(value="Exemplo de input: \nvalor::tipo")
+        self.labelResponseString = tk.StringVar(value="Exemplo de input: \ncalculos::string&&10::int&&10::int")
         self.labelResponse = tk.Label(self.frameReturn, textvariable=self.labelResponseString, bg="#232323", fg="#329C28", width=47, height=3)
         self.labelResponse.pack(pady=(0, 10))
 
@@ -85,17 +85,22 @@ class MainView():
                 else:
                     self.entry.grid(row=i, column=j)
                 self.entry.insert(0, self.listForTable[i][j])
+                self.entry.configure(state="disabled")
             
     def helpClick(self):
         helpTk = tk.Tk()
-        helpTk.resizable(width=False, height=False)
+        helpTk.resizable(width=500, height=500)
         helpTk.title("Ajuda")
-        helpTk.geometry('400x300')
+        helpTk.geometry('850x650')
 
         frameHelp = tk.Frame(helpTk)
         frameHelp.pack(pady=(10, 0))
 
-        labelHelp = tk.Label(frameHelp, text="Texto de ajuda\nvai aqui", font=(None, 14))
+        labelHelp = tk.Label(
+            frameHelp,
+            text="Sintaxe:\n\nPara realizar take, read e write o programa possui uma sintaxe especial, você precisa escrever o valor desejado seguido de seu tipo.\n\nExemplo:\n\nteste::string\n\nPara adicionar mais valores na tupla basta escrever && e multiplos valores com seus tipos.\n\nExemplo:\n\nteste::string&&10::int&&{'chave':'valor'}::dict&&10.0::float, que equivale a tupla ( 'string', 10, {'chave': 'valor'}, 10.0 )\n\n***  Não escreva espaços entre os valores, tudo deve estar junto na sintaxe!  ***\n\nEm caso de read e take você não precisa escrever os valores que vem depois do primeiro valor, pois o primeiro valor serve como chave para\nencontrar a tupla e os outros valores podem ser apenas o tipo.\n\nExemplo:\n\nteste::string&&::int&&::dict&&::float, que equivale a procurar a tupla ('teste', int, dict, float)\n\nUtilidade:\n\nNosso sistema possuí um servidor remoto que retorna resultado de calculos da seguinte forma:\n\n1. O usuário entra com a tupla ('calculos', 20, 10),\n2. Nosso servidor remoto realiza todas as possíveis operações matemáticas básicas com os valores 20 e 10,\n3. É realizado um write numa tupla chamada resultados com o seguinte formato:\n\n('resultados', valor_da_soma, valor_da_multiplicação, valor_da_multiplicação, valor_da_divisão)",
+            font=(None, 10)
+        )
         labelHelp.pack()
 
         helpTk.mainloop()
