@@ -57,4 +57,3 @@ if __name__ == "__main__":
                 if tupla_resposta != tuple(read_tupla_resposta['data']):
                     server.take(tupla_resposta)
                     server.write(tupla_resposta)
-                else:
